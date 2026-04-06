@@ -1,4 +1,4 @@
-import Navbar from "@/components/Navbar";
+import Navbar, { RunwayBar } from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import CategoryGrid from "@/components/CategoryGrid";
 import TheVault from "@/components/TheVault";
@@ -7,6 +7,7 @@ const Index = () => (
   <div className="min-h-screen bg-background">
     <Navbar />
     <Hero />
+    <RunwayBar />
     <CategoryGrid />
     <TheVault />
     <footer className="border-t bg-secondary/50 py-8">
