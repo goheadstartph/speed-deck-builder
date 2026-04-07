@@ -1,23 +1,12 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
 
-export type RunwaySlot = "digital-bank" | "local-broker" | "global-broker" | "credit-builder" | "long-term-goal";
-
-export const RUNWAY_SLOTS: { key: RunwaySlot; label: string }[] = [
-  { key: "digital-bank", label: "Digital Bank" },
-  { key: "local-broker", label: "Local Broker" },
-  { key: "global-broker", label: "Global Broker" },
-  { key: "credit-builder", label: "Credit Builder" },
-  { key: "long-term-goal", label: "Long-term Goal" },
-];
-
-export type SlotStatus = "empty" | "committed" | "active";
-
 export interface RunwayProduct {
   id: string;
   name: string;
-  slot: RunwaySlot;
   logoEmoji: string;
 }
+
+export type SlotStatus = "empty" | "committed" | "active";
 
 interface SlotState {
   product: RunwayProduct | null;
@@ -25,95 +14,85 @@ interface SlotState {
 }
 
 interface RunwayContextType {
-  slots: Record<RunwaySlot, SlotState>;
-  committedCount: number;
-  activeCount: number;
+  slots: SlotState[];
+  lifetimeGoals: number;
   addToRunway: (product: RunwayProduct) => void;
-  removeFromRunway: (slot: RunwaySlot) => void;
-  toggleActive: (slot: RunwaySlot) => void;
+  removeFromSlot: (index: number) => void;
+  markActive: (index: number) => void;
   isInRunway: (productId: string) => boolean;
-  getNextAvailableSlot: () => RunwaySlot | null;
 }
 
 const RunwayContext = createContext<RunwayContextType | undefined>(undefined);
 
-const STORAGE_KEY = "headstart-runway-v2";
+const STORAGE_KEY = "headstart-runway-v3";
+const TALLY_KEY = "headstart-lifetime-tally";
 
-const emptySlots: Record<RunwaySlot, SlotState> = {
-  "digital-bank": { product: null, status: "empty" },
-  "local-broker": { product: null, status: "empty" },
-  "global-broker": { product: null, status: "empty" },
-  "credit-builder": { product: null, status: "empty" },
-  "long-term-goal": { product: null, status: "empty" },
-};
+const createEmptySlots = (): SlotState[] =>
+  Array.from({ length: 5 }, () => ({ product: null, status: "empty" as SlotStatus }));
 
-function loadSlots(): Record<RunwaySlot, SlotState> {
+function loadSlots(): SlotState[] {
   try {
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored) return JSON.parse(stored);
   } catch {}
-  return { ...emptySlots };
+  return createEmptySlots();
+}
+
+function loadTally(): number {
+  try {
+    const stored = localStorage.getItem(TALLY_KEY);
+    if (stored) return JSON.parse(stored);
+  } catch {}
+  return 0;
 }
 
 export const RunwayProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [slots, setSlots] = useState(loadSlots);
+  const [lifetimeGoals, setLifetimeGoals] = useState(loadTally);
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(slots));
   }, [slots]);
 
-  const committedCount = Object.values(slots).filter((s) => s.status === "committed" || s.status === "active").length;
-  const activeCount = Object.values(slots).filter((s) => s.status === "active").length;
-
-  const getNextAvailableSlot = useCallback((): RunwaySlot | null => {
-    for (const s of RUNWAY_SLOTS) {
-      if (slots[s.key].status === "empty") return s.key;
-    }
-    return null;
-  }, [slots]);
+  useEffect(() => {
+    localStorage.setItem(TALLY_KEY, JSON.stringify(lifetimeGoals));
+  }, [lifetimeGoals]);
 
   const addToRunway = useCallback((product: RunwayProduct) => {
-    setSlots((prev) => ({
-      ...prev,
-      [product.slot]: { product, status: "committed" },
-    }));
-  }, []);
-
-  const removeFromRunway = useCallback((slot: RunwaySlot) => {
-    setSlots((prev) => ({
-      ...prev,
-      [slot]: { product: null, status: "empty" },
-    }));
-  }, []);
-
-  const toggleActive = useCallback((slot: RunwaySlot) => {
     setSlots((prev) => {
-      const current = prev[slot];
-      if (!current.product) return prev;
-      // Sequential enforcement: previous slots must be active
-      const slotIndex = RUNWAY_SLOTS.findIndex((s) => s.key === slot);
-      for (let i = 0; i < slotIndex; i++) {
-        if (prev[RUNWAY_SLOTS[i].key].status !== "active") return prev;
-      }
-      return {
-        ...prev,
-        [slot]: {
-          ...current,
-          status: current.status === "active" ? "committed" : "active",
-        },
-      };
+      const nextEmpty = prev.findIndex((s) => s.status === "empty");
+      if (nextEmpty === -1) return prev;
+      const updated = [...prev];
+      updated[nextEmpty] = { product, status: "committed" };
+      return updated;
     });
   }, []);
 
+  const removeFromSlot = useCallback((index: number) => {
+    setSlots((prev) => {
+      const updated = [...prev];
+      updated[index] = { product: null, status: "empty" };
+      return updated;
+    });
+  }, []);
+
+  const markActive = useCallback((index: number) => {
+    setSlots((prev) => {
+      if (prev[index].status !== "committed") return prev;
+      const updated = [...prev];
+      updated[index] = { ...updated[index], status: "active" };
+      return updated;
+    });
+    setLifetimeGoals((prev) => prev + 1);
+  }, []);
+
   const isInRunway = useCallback(
-    (productId: string) => Object.values(slots).some((s) => s.product?.id === productId),
+    (productId: string) => slots.some((s) => s.product?.id === productId),
     [slots]
   );
 
   return (
-    <RunwayContext.Provider
-      value={{ slots, committedCount, activeCount, addToRunway, removeFromRunway, toggleActive, isInRunway, getNextAvailableSlot }}
-    >
+    <RunwayContext.Provider value={{ slots, lifetimeGoals, addToRunway, removeFromSlot, markActive, isInRunway }}>
       {children}
     </RunwayContext.Provider>
   );
