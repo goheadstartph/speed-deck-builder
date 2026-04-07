@@ -1,139 +1,172 @@
 import type { ProductData } from "@/components/ProductCard";
 
 export const products: ProductData[] = [
-  // Digital Banks
   {
     id: "gotyme",
     name: "GoTyme Bank",
-    slot: "digital-bank",
-    grade: 95,
+    category: "Digital Bank",
+    score: 95,
     dataPoints: [
       { label: "Min. Deposit", value: "₱0" },
       { label: "Interest Rate", value: "Up to 5% p.a." },
+      { label: "Fees", value: "None" },
     ],
-    proTip: "Get your debit card at any GoTyme kiosk in Robinsons malls. Takes 10 minutes flat.",
+    proTip: "Get your debit card at any GoTyme kiosk in Robinsons malls.",
     applyUrl: "#",
     logoEmoji: "🏦",
+    breakdown:
+      "GoTyme Bank is a fully digital bank in the Philippines backed by the Gokongwei Group and Tyme Group. It offers one of the fastest account opening experiences — just 5 minutes at a kiosk — with no minimum balance and competitive interest rates. Ideal for students and first-time savers looking for a zero-friction banking entry point.",
+    keyDetails: [
+      "BSP-licensed digital bank with full deposit insurance up to ₱500,000 via PDIC.",
+      "Instant debit card issuance at Robinsons mall kiosks nationwide.",
+      "Free InstaPay & PESONet transfers with no hidden charges.",
+      "24/7 in-app customer support with real-time chat.",
+    ],
+    verdict:
+      "GoTyme is the gold standard for Gen Z banking in the Philippines. Zero friction, zero fees, and a savings rate that rivals time deposits. If you're building your first financial runway, this is Slot 1. The only downside? Limited branch presence — but if you're reading this, you probably don't need one.",
   },
   {
     id: "maya",
-    name: "Maya (PayMaya)",
-    slot: "digital-bank",
-    grade: 92,
+    name: "Maya Bank",
+    category: "Digital Bank",
+    score: 92,
     dataPoints: [
       { label: "Min. Deposit", value: "₱0" },
       { label: "Interest Rate", value: "Up to 15% p.a." },
+      { label: "Fees", value: "None" },
     ],
-    proTip: "Maya's time-deposit promo rates are among the highest — lock in early for max returns.",
+    proTip: "Maya's time-deposit promo rates are among the highest — lock in early.",
     applyUrl: "#",
     logoEmoji: "💚",
+    breakdown:
+      "Maya (formerly PayMaya) has evolved from a payments app into a full-fledged digital bank. It offers some of the highest savings interest rates in the market through its time-deposit products, making it a compelling choice for young savers who want their money to work harder.",
+    keyDetails: [
+      "Offers personal and time-deposit savings accounts with market-leading rates.",
+      "Crypto trading available directly in-app for diversified exposure.",
+      "Widely accepted QR payment network across Philippine merchants.",
+      "Regulated by BSP with PDIC deposit insurance coverage.",
+    ],
+    verdict:
+      "Maya is the aggressive saver's best friend. The promo rates on time deposits are genuinely hard to beat anywhere in Southeast Asia. The catch? Promo rates expire, so you need to stay on top of rollovers. Pair this with GoTyme for a killer two-bank strategy.",
   },
   {
     id: "seabank",
     name: "SeaBank",
-    slot: "digital-bank",
-    grade: 90,
+    category: "Digital Bank",
+    score: 90,
     dataPoints: [
       { label: "Min. Deposit", value: "₱0" },
       { label: "Interest Rate", value: "Up to 5% p.a." },
+      { label: "Fees", value: "None" },
     ],
-    proTip: "Linked to Shopee — great for cashback stacking if you're already a Shopee user.",
+    proTip: "Linked to Shopee — great for cashback stacking.",
     applyUrl: "#",
     logoEmoji: "🌊",
+    breakdown:
+      "SeaBank Philippines is the digital banking arm of Sea Group (Shopee's parent). Its tight integration with the Shopee ecosystem gives it unique cashback and rewards advantages. A solid pick for anyone already deep in the Shopee universe.",
+    keyDetails: [
+      "Seamless integration with Shopee for cashback and voucher rewards.",
+      "Competitive base savings rate with no lock-up period.",
+      "Instant fund transfers via InstaPay and PESONet.",
+      "BSP-regulated with full PDIC deposit insurance.",
+    ],
+    verdict:
+      "If Shopee is your life, SeaBank is a no-brainer add-on. The cashback synergies alone justify the slot. For pure savings rate, Maya and GoTyme edge it out, but the ecosystem play is strong here.",
   },
-  // Local Broker
   {
     id: "col-financial",
     name: "COL Financial",
-    slot: "local-broker",
-    grade: 88,
+    category: "Local Broker",
+    score: 88,
     dataPoints: [
       { label: "Min. Investment", value: "₱5,000" },
       { label: "Trading Fee", value: "0.25%" },
+      { label: "Access", value: "PSE Stocks" },
     ],
-    proTip: "The OG PH broker. Great educational resources for beginners. Requires PhilID or valid gov't ID.",
+    proTip: "The OG PH broker. Great educational resources for beginners.",
     applyUrl: "#",
     logoEmoji: "📈",
-  },
-  {
-    id: "investa",
-    name: "InvestaWatcher",
-    slot: "local-broker",
-    grade: 85,
-    dataPoints: [
-      { label: "Min. Investment", value: "Varies" },
-      { label: "Screener", value: "Free & Premium" },
+    breakdown:
+      "COL Financial is the most established online stockbroker in the Philippines. It provides direct access to the Philippine Stock Exchange with robust charting, research, and educational materials. A rite of passage for any Filipino who wants to learn equities.",
+    keyDetails: [
+      "Direct PSE market access with real-time quotes and advanced charting.",
+      "Extensive library of free investment courses and webinars.",
+      "Multiple account types: stock trading, mutual funds, and EIP (Easy Investment Program).",
+      "Minimum ₱5,000 to open; ₱1,000 minimum per EIP fund.",
     ],
-    proTip: "Not a broker itself but an essential companion tool for stock screening and analysis.",
-    applyUrl: "#",
-    logoEmoji: "🔍",
+    verdict:
+      "COL is the training ground. Every serious Filipino investor has passed through here. The platform feels dated compared to global fintechs, but the educational value and PSE access are unmatched locally. Start your EIP here while you learn.",
   },
-  // Global Broker
   {
     id: "gotrade",
     name: "GoTrade",
-    slot: "global-broker",
-    grade: 93,
+    category: "Global Broker",
+    score: 93,
     dataPoints: [
       { label: "Min. Investment", value: "$1 (Fractional)" },
       { label: "Commission", value: "Free" },
+      { label: "Markets", value: "US Stocks & ETFs" },
     ],
-    proTip: "Buy US stocks with as little as $1. Best entry point for global investing from PH.",
+    proTip: "Buy US stocks with as little as $1. Best entry point for global investing.",
     applyUrl: "#",
     logoEmoji: "🌐",
+    breakdown:
+      "GoTrade democratizes US stock market access for Filipinos. With fractional shares starting at $1 and zero commission, it removes every traditional barrier to global investing. Perfect for dollar-cost averaging into index ETFs.",
+    keyDetails: [
+      "Fractional shares allow investing in expensive stocks like Apple or Tesla from just $1.",
+      "Zero-commission trading on all US-listed stocks and ETFs.",
+      "Regulated by SEC (US) with assets held by Alpaca Securities.",
+      "Simple mobile-first interface designed for first-time global investors.",
+    ],
+    verdict:
+      "GoTrade is the gateway drug to global markets. The $1 minimum is genuinely revolutionary for Filipino students. Start DCA-ing into VOO or VTI here while you're still in school. By graduation, you'll have a real portfolio.",
   },
   {
     id: "etoro",
     name: "eToro",
-    slot: "global-broker",
-    grade: 82,
+    category: "Global Broker",
+    score: 82,
     dataPoints: [
       { label: "Min. Deposit", value: "$50" },
       { label: "Commission", value: "0% stocks" },
+      { label: "Features", value: "Copy Trading" },
     ],
-    proTip: "Copy-trading feature lets you mirror top investors. Great for passive learners.",
+    proTip: "Copy-trading feature lets you mirror top investors.",
     applyUrl: "#",
     logoEmoji: "🐂",
+    breakdown:
+      "eToro is a globally recognized social trading platform that lets you copy the portfolios of successful investors. While the $50 minimum is higher than GoTrade, the social trading angle makes it unique for passive learners.",
+    keyDetails: [
+      "CopyTrader feature allows you to automatically replicate top investors' moves.",
+      "Access to stocks, ETFs, crypto, and CFDs on one platform.",
+      "Social feed with market discussion and investment ideas.",
+      "Regulated in multiple jurisdictions; higher minimum than pure-play competitors.",
+    ],
+    verdict:
+      "eToro is best for the 'I want to invest but don't want to research' crowd. Copy trading is a legitimate learning tool, but don't treat it as a substitute for understanding what you own. Use it alongside GoTrade, not instead of it.",
   },
-  // Credit Builder
   {
     id: "gcredit",
     name: "GCredit (GCash)",
-    slot: "credit-builder",
-    grade: 87,
+    category: "Credit Builder",
+    score: 87,
     dataPoints: [
       { label: "Credit Limit", value: "Up to ₱30,000" },
       { label: "Interest", value: "5%/month" },
+      { label: "Requirement", value: "GCash Account" },
     ],
-    proTip: "Use it, pay it off immediately. This builds your credit score for future loans. Don't carry a balance.",
+    proTip: "Use it, pay it off immediately. Builds your credit score.",
     applyUrl: "#",
     logoEmoji: "💳",
-  },
-  // Long-term Goal
-  {
-    id: "mp2",
-    name: "Pag-IBIG MP2",
-    slot: "long-term-goal",
-    grade: 96,
-    dataPoints: [
-      { label: "Min. Savings", value: "₱500" },
-      { label: "Dividend", value: "~7% p.a. (tax-free)" },
+    breakdown:
+      "GCredit is a buy-now-pay-later credit line within GCash. It's one of the easiest ways for young Filipinos to start building a credit history without needing a traditional credit card. The key is discipline — always pay in full.",
+    keyDetails: [
+      "Instantly available within the GCash app for verified users.",
+      "Credit limit increases based on responsible usage and repayment history.",
+      "Can be used for in-app purchases, bills payment, and partner merchants.",
+      "Reports to credit bureaus, helping build your formal credit score.",
     ],
-    proTip: "Government-backed, tax-free dividends. One of the best low-risk investments in PH. Start ASAP.",
-    applyUrl: "#",
-    logoEmoji: "🏠",
-  },
-  {
-    id: "gcash-ginvest",
-    name: "GInvest (GCash)",
-    slot: "long-term-goal",
-    grade: 80,
-    dataPoints: [
-      { label: "Min. Investment", value: "₱50" },
-      { label: "Fund Type", value: "UITF / Money Market" },
-    ],
-    proTip: "Easiest way to start investing in funds. Low minimums, right inside your GCash app.",
-    applyUrl: "#",
-    logoEmoji: "📊",
+    verdict:
+      "GCredit is a double-edged sword. Used responsibly (buy small, pay immediately), it's a free credit-building tool. Used irresponsibly, 5%/month interest will eat you alive. Treat it as a credit score builder, not a spending tool.",
   },
 ];
