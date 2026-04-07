@@ -10,62 +10,110 @@ export const RUNWAY_SLOTS: { key: RunwaySlot; label: string }[] = [
   { key: "long-term-goal", label: "Long-term Goal" },
 ];
 
+export type SlotStatus = "empty" | "committed" | "active";
+
 export interface RunwayProduct {
   id: string;
   name: string;
   slot: RunwaySlot;
+  logoEmoji: string;
+}
+
+interface SlotState {
+  product: RunwayProduct | null;
+  status: SlotStatus;
 }
 
 interface RunwayContextType {
-  runway: Record<RunwaySlot, RunwayProduct | null>;
-  filledCount: number;
+  slots: Record<RunwaySlot, SlotState>;
+  committedCount: number;
+  activeCount: number;
   addToRunway: (product: RunwayProduct) => void;
   removeFromRunway: (slot: RunwaySlot) => void;
+  toggleActive: (slot: RunwaySlot) => void;
   isInRunway: (productId: string) => boolean;
+  getNextAvailableSlot: () => RunwaySlot | null;
 }
 
 const RunwayContext = createContext<RunwayContextType | undefined>(undefined);
 
-const STORAGE_KEY = "headstart-runway";
+const STORAGE_KEY = "headstart-runway-v2";
 
-function loadRunway(): Record<RunwaySlot, RunwayProduct | null> {
+const emptySlots: Record<RunwaySlot, SlotState> = {
+  "digital-bank": { product: null, status: "empty" },
+  "local-broker": { product: null, status: "empty" },
+  "global-broker": { product: null, status: "empty" },
+  "credit-builder": { product: null, status: "empty" },
+  "long-term-goal": { product: null, status: "empty" },
+};
+
+function loadSlots(): Record<RunwaySlot, SlotState> {
   try {
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored) return JSON.parse(stored);
   } catch {}
-  return {
-    "digital-bank": null,
-    "local-broker": null,
-    "global-broker": null,
-    "credit-builder": null,
-    "long-term-goal": null,
-  };
+  return { ...emptySlots };
 }
 
 export const RunwayProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [runway, setRunway] = useState(loadRunway);
+  const [slots, setSlots] = useState(loadSlots);
 
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(runway));
-  }, [runway]);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(slots));
+  }, [slots]);
 
-  const filledCount = Object.values(runway).filter(Boolean).length;
+  const committedCount = Object.values(slots).filter((s) => s.status === "committed" || s.status === "active").length;
+  const activeCount = Object.values(slots).filter((s) => s.status === "active").length;
+
+  const getNextAvailableSlot = useCallback((): RunwaySlot | null => {
+    for (const s of RUNWAY_SLOTS) {
+      if (slots[s.key].status === "empty") return s.key;
+    }
+    return null;
+  }, [slots]);
 
   const addToRunway = useCallback((product: RunwayProduct) => {
-    setRunway((prev) => ({ ...prev, [product.slot]: product }));
+    setSlots((prev) => ({
+      ...prev,
+      [product.slot]: { product, status: "committed" },
+    }));
   }, []);
 
   const removeFromRunway = useCallback((slot: RunwaySlot) => {
-    setRunway((prev) => ({ ...prev, [slot]: null }));
+    setSlots((prev) => ({
+      ...prev,
+      [slot]: { product: null, status: "empty" },
+    }));
+  }, []);
+
+  const toggleActive = useCallback((slot: RunwaySlot) => {
+    setSlots((prev) => {
+      const current = prev[slot];
+      if (!current.product) return prev;
+      // Sequential enforcement: previous slots must be active
+      const slotIndex = RUNWAY_SLOTS.findIndex((s) => s.key === slot);
+      for (let i = 0; i < slotIndex; i++) {
+        if (prev[RUNWAY_SLOTS[i].key].status !== "active") return prev;
+      }
+      return {
+        ...prev,
+        [slot]: {
+          ...current,
+          status: current.status === "active" ? "committed" : "active",
+        },
+      };
+    });
   }, []);
 
   const isInRunway = useCallback(
-    (productId: string) => Object.values(runway).some((p) => p?.id === productId),
-    [runway]
+    (productId: string) => Object.values(slots).some((s) => s.product?.id === productId),
+    [slots]
   );
 
   return (
-    <RunwayContext.Provider value={{ runway, filledCount, addToRunway, removeFromRunway, isInRunway }}>
+    <RunwayContext.Provider
+      value={{ slots, committedCount, activeCount, addToRunway, removeFromRunway, toggleActive, isInRunway, getNextAvailableSlot }}
+    >
       {children}
     </RunwayContext.Provider>
   );
