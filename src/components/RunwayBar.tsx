@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Check, Trophy, ChevronDown } from "lucide-react";
+import { Check, Trophy } from "lucide-react";
 import { useRunway } from "@/contexts/RunwayContext";
 import { products } from "@/data/products";
 import { toast } from "sonner";
@@ -9,9 +9,27 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 
+type RunwayFilter = "all" | "digital-bank" | "local-broker" | "global-broker" | "credit-builder";
+
+const runwayFilters: { key: RunwayFilter; label: string }[] = [
+  { key: "all", label: "All" },
+  { key: "digital-bank", label: "Banks" },
+  { key: "local-broker", label: "Local" },
+  { key: "global-broker", label: "Global" },
+  { key: "credit-builder", label: "Credit" },
+];
+
+const categoryMap: Record<string, RunwayFilter> = {
+  "Digital Bank": "digital-bank",
+  "Local Broker": "local-broker",
+  "Global Broker": "global-broker",
+  "Credit Builder": "credit-builder",
+};
+
 const RunwayBar = () => {
   const { slots, lifetimeGoals, markActive, removeFromSlot, addToRunway, isInRunway } = useRunway();
   const [openSlot, setOpenSlot] = useState<number | null>(null);
+  const [slotFilter, setSlotFilter] = useState<RunwayFilter>("all");
 
   const committedCount = slots.filter((s) => s.status === "committed" || s.status === "active").length;
   const activeCount = slots.filter((s) => s.status === "active").length;
@@ -25,13 +43,14 @@ const RunwayBar = () => {
   };
 
   const availableProducts = products.filter((p) => !isInRunway(p.id));
-
-  const categories = [...new Set(products.map((p) => p.category))];
+  const filteredAvailable = slotFilter === "all"
+    ? availableProducts
+    : availableProducts.filter((p) => categoryMap[p.category] === slotFilter);
 
   return (
     <div className="glass-strong rounded-2xl p-6 max-w-3xl mx-auto">
       {/* Header */}
-      <div className="flex items-center justify-between mb-5">
+      <div className="flex items-center justify-between mb-4">
         <span className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
           Your Runway
         </span>
@@ -47,7 +66,7 @@ const RunwayBar = () => {
       </div>
 
       {/* Slots */}
-      <div className="flex items-center justify-center">
+      <div className="flex items-center justify-center mb-5">
         {slots.map((slot, i) => {
           const isActive = slot.status === "active";
           const isCommitted = slot.status === "committed";
@@ -57,7 +76,7 @@ const RunwayBar = () => {
             <div key={i} className="flex items-center">
               <div className="relative group">
                 {isEmpty ? (
-                  <Popover open={openSlot === i} onOpenChange={(open) => setOpenSlot(open ? i : null)}>
+                  <Popover open={openSlot === i} onOpenChange={(open) => { setOpenSlot(open ? i : null); if (open) setSlotFilter("all"); }}>
                     <PopoverTrigger asChild>
                       <button
                         className="relative flex h-12 w-12 items-center justify-center rounded-full border-2 border-muted-foreground/20 bg-white/20 backdrop-blur-sm transition-all duration-300 cursor-pointer hover:scale-110 hover:border-primary/40"
@@ -66,42 +85,53 @@ const RunwayBar = () => {
                         <span className="text-sm font-semibold text-muted-foreground">{i + 1}</span>
                       </button>
                     </PopoverTrigger>
-                    <PopoverContent className="glass w-64 p-0 border-white/30" align="center">
+                    <PopoverContent className="glass w-72 p-0 border-white/30" align="center">
                       <div className="p-3 border-b border-white/20">
                         <p className="text-xs font-semibold text-foreground">Assign to Slot {i + 1}</p>
-                        <p className="text-[10px] text-muted-foreground">Pick a product from the vault</p>
+                        <p className="text-[10px] text-muted-foreground">Filter & pick a product</p>
+                      </div>
+                      {/* Mini filter bar */}
+                      <div className="flex gap-1 px-3 py-2 border-b border-white/10 flex-wrap">
+                        {runwayFilters.map((f) => (
+                          <button
+                            key={f.key}
+                            onClick={() => setSlotFilter(f.key)}
+                            className={`px-2.5 py-1 rounded-full text-[10px] font-semibold transition-all ${
+                              slotFilter === f.key
+                                ? "bg-primary text-primary-foreground"
+                                : "text-muted-foreground hover:text-foreground hover:bg-white/20"
+                            }`}
+                          >
+                            {f.label}
+                          </button>
+                        ))}
                       </div>
                       <div className="max-h-48 overflow-y-auto">
-                        {categories.map((cat) => {
-                          const catProducts = availableProducts.filter((p) => p.category === cat);
-                          if (catProducts.length === 0) return null;
-                          return (
-                            <div key={cat}>
-                              <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground px-3 pt-2 pb-1">{cat}</p>
-                              {catProducts
-                                .sort((a, b) => b.score - a.score)
-                                .map((p) => (
-                                  <button
-                                    key={p.id}
-                                    className="flex items-center gap-2 w-full px-3 py-2 hover:bg-white/20 transition-colors text-left"
-                                    onClick={() => {
-                                      addToRunway({ id: p.id, name: p.name, logoEmoji: p.logoEmoji });
-                                      setOpenSlot(null);
-                                      toast.success(`${p.name} added to Slot ${i + 1}! 🚀`);
-                                    }}
-                                  >
-                                    <span className="text-lg">{p.logoEmoji}</span>
-                                    <div className="min-w-0">
-                                      <p className="text-xs font-medium text-foreground truncate">{p.name}</p>
-                                      <p className="text-[10px] text-primary font-bold">{p.score}/100</p>
-                                    </div>
-                                  </button>
-                                ))}
-                            </div>
-                          );
-                        })}
-                        {availableProducts.length === 0 && (
-                          <p className="text-xs text-muted-foreground p-3 text-center">All products assigned!</p>
+                        {filteredAvailable.length > 0 ? (
+                          filteredAvailable
+                            .sort((a, b) => b.score - a.score)
+                            .map((p) => (
+                              <button
+                                key={p.id}
+                                className="flex items-center gap-2 w-full px-3 py-2 hover:bg-white/20 transition-colors text-left"
+                                onClick={() => {
+                                  addToRunway({ id: p.id, name: p.name, logoEmoji: p.logoEmoji });
+                                  setOpenSlot(null);
+                                  toast.success(`${p.name} added to Slot ${i + 1}! 🚀`);
+                                }}
+                              >
+                                <span className="text-lg">{p.logoEmoji}</span>
+                                <div className="min-w-0 flex-1">
+                                  <p className="text-xs font-medium text-foreground truncate">{p.name}</p>
+                                  <p className="text-[10px] text-muted-foreground">{p.category}</p>
+                                </div>
+                                <span className="text-[10px] font-bold text-primary">{p.score}</span>
+                              </button>
+                            ))
+                        ) : (
+                          <p className="text-xs text-muted-foreground p-3 text-center">
+                            {availableProducts.length === 0 ? "All products assigned!" : "No products in this category"}
+                          </p>
                         )}
                       </div>
                     </PopoverContent>
@@ -128,7 +158,6 @@ const RunwayBar = () => {
                   </button>
                 )}
 
-                {/* Remove button on hover */}
                 {(isCommitted || isActive) && (
                   <button
                     onClick={(e) => {

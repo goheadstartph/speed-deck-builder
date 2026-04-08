@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Search, Menu, X, Home, FileText, GraduationCap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -12,6 +12,9 @@ const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const [hovered, setHovered] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const labelRefs = useRef<(HTMLSpanElement | null)[]>([]);
+  const logoTextRef = useRef<HTMLSpanElement>(null);
+  const authRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 50);
@@ -25,34 +28,37 @@ const Navbar = () => {
     <nav
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      className={`fixed top-4 left-1/2 z-50 -translate-x-1/2 glass rounded-full transition-all duration-500 ease-in-out ${
-        collapsed ? "max-w-xs py-2 px-3" : "max-w-2xl py-3 px-6"
-      } w-[95%]`}
+      className="fixed top-4 left-1/2 z-50 -translate-x-1/2 glass rounded-full transition-all duration-500 ease-[cubic-bezier(0.25,0.1,0.25,1)] w-auto"
+      style={{ padding: collapsed ? "8px 12px" : "12px 24px" }}
     >
-      <div className="flex items-center justify-between gap-2">
+      <div className="flex items-center gap-2">
         {/* Logo */}
         <div className="flex items-center gap-2 shrink-0">
-          <div className={`flex items-center justify-center rounded-xl bg-primary transition-all duration-300 ${collapsed ? "h-7 w-7" : "h-9 w-9"}`}>
-            <span className={`font-bold text-primary-foreground ${collapsed ? "text-xs" : "text-sm"}`}>H</span>
+          <div className={`flex items-center justify-center rounded-xl bg-primary transition-all duration-500 ease-[cubic-bezier(0.25,0.1,0.25,1)] ${collapsed ? "h-7 w-7" : "h-9 w-9"}`}>
+            <span className={`font-bold text-primary-foreground transition-all duration-500 ${collapsed ? "text-xs" : "text-sm"}`}>H</span>
           </div>
-          <span className={`font-bold tracking-tight text-foreground transition-all duration-300 overflow-hidden whitespace-nowrap ${
-            collapsed ? "w-0 opacity-0" : "w-auto opacity-100"
-          }`}>
+          <span
+            ref={logoTextRef}
+            className="font-bold tracking-tight text-foreground whitespace-nowrap overflow-hidden transition-all duration-500 ease-[cubic-bezier(0.25,0.1,0.25,1)]"
+            style={{ width: collapsed ? 0 : logoTextRef.current?.scrollWidth ?? 80, opacity: collapsed ? 0 : 1 }}
+          >
             Headstart
           </span>
         </div>
 
         {/* Center nav */}
         <div className="hidden md:flex items-center gap-1">
-          {navLinks.map((link) => (
+          {navLinks.map((link, i) => (
             <button
               key={link.label}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-white/20 transition-all"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-white/20 transition-colors"
             >
               <link.icon className="h-4 w-4 shrink-0" />
-              <span className={`transition-all duration-300 overflow-hidden whitespace-nowrap ${
-                collapsed ? "w-0 opacity-0" : "w-auto opacity-100"
-              }`}>
+              <span
+                ref={(el) => { labelRefs.current[i] = el; }}
+                className="whitespace-nowrap overflow-hidden transition-all duration-500 ease-[cubic-bezier(0.25,0.1,0.25,1)]"
+                style={{ width: collapsed ? 0 : labelRefs.current[i]?.scrollWidth ?? 60, opacity: collapsed ? 0 : 1 }}
+              >
                 {link.label}
               </span>
             </button>
@@ -60,18 +66,22 @@ const Navbar = () => {
         </div>
 
         {/* Right actions */}
-        <div className={`flex items-center gap-1.5 shrink-0 transition-all duration-300 ${collapsed ? "gap-1" : "gap-2"}`}>
+        <div className="flex items-center gap-1.5 shrink-0">
           <Button variant="ghost" size="icon" className="rounded-full text-muted-foreground hover:text-foreground h-8 w-8">
             <Search className="h-4 w-4" />
           </Button>
-          <span className={`transition-all duration-300 overflow-hidden whitespace-nowrap ${collapsed ? "w-0 opacity-0 hidden" : "w-auto opacity-100 hidden md:flex gap-1.5"}`}>
-            <Button variant="ghost" size="sm" className="rounded-full text-sm font-medium text-muted-foreground">
+          <div
+            ref={authRef}
+            className="hidden md:flex items-center gap-1.5 overflow-hidden transition-all duration-500 ease-[cubic-bezier(0.25,0.1,0.25,1)]"
+            style={{ width: collapsed ? 0 : authRef.current?.scrollWidth ?? 160, opacity: collapsed ? 0 : 1 }}
+          >
+            <Button variant="ghost" size="sm" className="rounded-full text-sm font-medium text-muted-foreground whitespace-nowrap">
               Login
             </Button>
-            <Button size="sm" className="rounded-full text-sm font-semibold">
+            <Button size="sm" className="rounded-full text-sm font-semibold whitespace-nowrap">
               Sign Up
             </Button>
-          </span>
+          </div>
           <Button
             variant="ghost"
             size="icon"
