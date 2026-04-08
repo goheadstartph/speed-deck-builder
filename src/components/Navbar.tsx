@@ -1,8 +1,12 @@
 import { useState, useEffect } from "react";
-import { Search, Menu, X } from "lucide-react";
+import { Search, Menu, X, Home, FileText, GraduationCap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-const navLinks = ["Home", "Articles", "Education"];
+const navLinks = [
+  { label: "Home", icon: Home },
+  { label: "Articles", icon: FileText },
+  { label: "Education", icon: GraduationCap },
+];
 
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
@@ -10,62 +14,71 @@ const Navbar = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 40);
+    const onScroll = () => setScrolled(window.scrollY > 50);
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const compact = scrolled && !hovered;
+  const collapsed = scrolled && !hovered;
 
   return (
     <nav
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      className={`fixed top-4 left-1/2 z-50 -translate-x-1/2 w-[95%] max-w-5xl glass rounded-2xl transition-all duration-300 ${
-        compact ? "py-2 px-4" : "py-3 px-6"
-      }`}
+      className={`fixed top-4 left-1/2 z-50 -translate-x-1/2 glass rounded-full transition-all duration-500 ease-in-out ${
+        collapsed ? "max-w-xs py-2 px-3" : "max-w-2xl py-3 px-6"
+      } w-[95%]`}
     >
-      <div className="flex items-center justify-between">
-        {/* Left: Logo */}
-        <div className="flex items-center gap-2.5">
-          <div className={`flex items-center justify-center rounded-xl bg-primary transition-all duration-300 ${compact ? "h-8 w-8" : "h-9 w-9"}`}>
-            <span className="text-sm font-bold text-primary-foreground">H</span>
+      <div className="flex items-center justify-between gap-2">
+        {/* Logo */}
+        <div className="flex items-center gap-2 shrink-0">
+          <div className={`flex items-center justify-center rounded-xl bg-primary transition-all duration-300 ${collapsed ? "h-7 w-7" : "h-9 w-9"}`}>
+            <span className={`font-bold text-primary-foreground ${collapsed ? "text-xs" : "text-sm"}`}>H</span>
           </div>
-          <span className={`font-bold tracking-tight text-foreground transition-all duration-300 ${compact ? "text-base" : "text-lg"}`}>
+          <span className={`font-bold tracking-tight text-foreground transition-all duration-300 overflow-hidden whitespace-nowrap ${
+            collapsed ? "w-0 opacity-0" : "w-auto opacity-100"
+          }`}>
             Headstart
           </span>
         </div>
 
-        {/* Center: Nav links (desktop) */}
+        {/* Center nav */}
         <div className="hidden md:flex items-center gap-1">
           {navLinks.map((link) => (
             <button
-              key={link}
-              className="px-4 py-1.5 rounded-full text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-white/20 transition-all"
+              key={link.label}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-white/20 transition-all"
             >
-              {link}
+              <link.icon className="h-4 w-4 shrink-0" />
+              <span className={`transition-all duration-300 overflow-hidden whitespace-nowrap ${
+                collapsed ? "w-0 opacity-0" : "w-auto opacity-100"
+              }`}>
+                {link.label}
+              </span>
             </button>
           ))}
         </div>
 
-        {/* Right: Actions */}
-        <div className="flex items-center gap-2">
-          <Button variant="ghost" size="icon" className="rounded-full text-muted-foreground hover:text-foreground">
+        {/* Right actions */}
+        <div className={`flex items-center gap-1.5 shrink-0 transition-all duration-300 ${collapsed ? "gap-1" : "gap-2"}`}>
+          <Button variant="ghost" size="icon" className="rounded-full text-muted-foreground hover:text-foreground h-8 w-8">
             <Search className="h-4 w-4" />
           </Button>
-          <Button variant="ghost" size="sm" className="hidden md:inline-flex rounded-full text-sm font-medium text-muted-foreground">
-            Login
-          </Button>
-          <Button size="sm" className="hidden md:inline-flex rounded-full text-sm font-semibold">
-            Sign Up
-          </Button>
+          <span className={`transition-all duration-300 overflow-hidden whitespace-nowrap ${collapsed ? "w-0 opacity-0 hidden" : "w-auto opacity-100 hidden md:flex gap-1.5"}`}>
+            <Button variant="ghost" size="sm" className="rounded-full text-sm font-medium text-muted-foreground">
+              Login
+            </Button>
+            <Button size="sm" className="rounded-full text-sm font-semibold">
+              Sign Up
+            </Button>
+          </span>
           <Button
             variant="ghost"
             size="icon"
-            className="md:hidden rounded-full text-muted-foreground"
+            className="md:hidden rounded-full text-muted-foreground h-8 w-8"
             onClick={() => setMobileOpen(!mobileOpen)}
           >
-            {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            {mobileOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
           </Button>
         </div>
       </div>
@@ -75,10 +88,11 @@ const Navbar = () => {
         <div className="md:hidden mt-3 flex flex-col gap-1 border-t border-white/20 pt-3">
           {navLinks.map((link) => (
             <button
-              key={link}
-              className="px-4 py-2 rounded-xl text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-white/10 text-left transition-all"
+              key={link.label}
+              className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-white/10 text-left transition-all"
             >
-              {link}
+              <link.icon className="h-4 w-4" />
+              {link.label}
             </button>
           ))}
           <div className="flex gap-2 mt-2">

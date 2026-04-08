@@ -16,6 +16,7 @@ export interface ProductData {
   name: string;
   category: string;
   score: number;
+  scoreTooltip?: string;
   dataPoints: [{ label: string; value: string }, { label: string; value: string }, { label: string; value: string }];
   proTip: string;
   applyUrl: string;
@@ -61,7 +62,7 @@ const ProductCard = ({ product }: { product: ProductData }) => {
             <h3 className="font-semibold text-foreground text-sm leading-tight">{product.name}</h3>
             <p className="text-[11px] text-muted-foreground">{product.category}</p>
           </div>
-          <ScoreGauge score={product.score} />
+          <ScoreGauge score={product.score} tooltip={product.scoreTooltip} />
         </div>
 
         {/* Middle: Data */}
