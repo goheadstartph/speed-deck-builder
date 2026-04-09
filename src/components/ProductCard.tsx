@@ -70,52 +70,57 @@ const ProductCard = ({
         </div>
       )}
 
-      {/* Header: Logo + Name + Score + Actions */}
-      <div className="flex items-center justify-between px-6 pt-4 pb-3">
-        <div className="flex items-center gap-3">
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-white/30 backdrop-blur-sm text-2xl border border-white/20">
-            {product.logoEmoji}
-          </div>
-          <div className="flex items-center gap-3">
-            <div>
-              <h3 className="font-semibold text-foreground text-base leading-tight">{product.name}</h3>
-              <p className="text-xs text-muted-foreground">{product.category}</p>
-            </div>
-            <ScoreGauge score={product.score} size={44} tooltip={product.scoreTooltip} />
-          </div>
+      {/* Header: Logo + Name + Score */}
+      <div className="flex items-center gap-3 px-6 pt-4 pb-3">
+        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-white/30 backdrop-blur-sm text-2xl border border-white/20">
+          {product.logoEmoji}
         </div>
-        <div className="flex flex-col gap-1.5">
-          <Button asChild size="sm" className="rounded-full text-xs h-8">
-            <a href={product.applyUrl} target="_blank" rel="noopener noreferrer">
-              Apply now
-              <ExternalLink className="ml-1.5 h-3 w-3" />
-            </a>
-          </Button>
-          <Button
-            variant={inRunway ? "default" : "outline"}
-            size="sm"
-            className={`rounded-full text-xs h-8 transition-all ${justAdded ? "animate-bounce-in" : ""} ${
-              !inRunway ? "bg-white/10 backdrop-blur-sm border-white/20 hover:bg-white/20" : ""
-            }`}
-            onClick={handleToggleRunway}
-          >
-            {inRunway ? (
-              <>
-                <Check className="mr-1 h-3 w-3" />
-                In Runway
-              </>
-            ) : (
-              <>
-                <Plus className="mr-1 h-3 w-3" />
-                Add to Runway
-              </>
-            )}
-          </Button>
+        <div>
+          <h3 className="font-semibold text-foreground text-base leading-tight">{product.name}</h3>
+          <p className="text-xs text-muted-foreground">{product.category}</p>
         </div>
+        <ScoreGauge score={product.score} size={44} tooltip={product.scoreTooltip} />
       </div>
 
+      {/* Divider */}
+      <div className="mx-6 border-t border-white/15" />
+
+      {/* Data points grid */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-x-6 gap-y-3 px-6 py-4">
+        {product.dataPoints.map((dp) => (
+          <div key={dp.label}>
+            <p className="text-[11px] text-muted-foreground">{dp.label}</p>
+            <p className="text-sm font-bold text-foreground">{dp.value}</p>
+          </div>
+        ))}
+      </div>
+
+      {/* Divider */}
+      <div className="mx-6 border-t border-white/15" />
+
+      {/* Feature pills */}
+      {product.tags && product.tags.length > 0 && (
+        <div className="flex flex-wrap gap-2 px-6 py-4">
+          {product.tags.map((tag, i) => (
+            <span
+              key={i}
+              className={`rounded-full px-3 py-1 text-xs font-medium border ${
+                i < 2
+                  ? "border-primary/30 text-primary bg-primary/5"
+                  : "border-white/20 text-muted-foreground bg-white/5"
+              }`}
+            >
+              {tag}
+            </span>
+          ))}
+        </div>
+      )}
+
+      {/* Divider */}
+      <div className="mx-6 border-t border-white/15" />
+
       {/* Accordions */}
-      <div className="border-t border-white/15 px-6 pb-2">
+      <div className="px-6">
         <Accordion type="multiple">
           <AccordionItem value="breakdown" className="border-b border-white/10">
             <AccordionTrigger className="text-sm font-medium text-muted-foreground hover:text-foreground hover:no-underline py-3">
@@ -151,6 +156,32 @@ const ProductCard = ({
             </AccordionContent>
           </AccordionItem>
         </Accordion>
+      </div>
+
+      {/* Divider */}
+      <div className="mx-6 border-t border-white/15" />
+
+      {/* Bottom action bar */}
+      <div className="flex items-center gap-3 px-6 py-4">
+        <Button asChild size="sm" className="rounded-full text-xs h-8 flex-1">
+          <a href={product.applyUrl} target="_blank" rel="noopener noreferrer">
+            Apply now
+            <ExternalLink className="ml-1.5 h-3 w-3" />
+          </a>
+        </Button>
+        <Button
+          variant={inRunway ? "default" : "outline"}
+          size="icon"
+          className={`rounded-full h-8 w-8 shrink-0 transition-all group relative ${justAdded ? "animate-bounce-in" : ""} ${
+            !inRunway ? "bg-white/10 backdrop-blur-sm border-white/20 hover:bg-white/20" : ""
+          }`}
+          onClick={handleToggleRunway}
+        >
+          {inRunway ? <Check className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
+          <span className="absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-md bg-foreground text-background px-2 py-1 text-[10px] font-medium opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+            {inRunway ? "Remove from Runway" : "Add to Runway"}
+          </span>
+        </Button>
       </div>
     </div>
   );
