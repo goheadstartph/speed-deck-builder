@@ -1,13 +1,13 @@
 import { Landmark, TrendingUp, Globe, CreditCard } from "lucide-react";
 
-type FilterKey = "all" | "digital-bank" | "local-broker" | "global-broker" | "credit-builder";
+type FilterKey = "all" | "digital-bank" | "local-broker" | "global-broker" | "credit-card";
 
 const filters: { key: FilterKey; label: string; icon?: React.ElementType }[] = [
   { key: "all", label: "All" },
   { key: "digital-bank", label: "Digital Banks", icon: Landmark },
   { key: "local-broker", label: "Local Brokers", icon: TrendingUp },
   { key: "global-broker", label: "Global Brokers", icon: Globe },
-  { key: "credit-builder", label: "Credit Builders", icon: CreditCard },
+  { key: "credit-card", label: "Credit Cards", icon: CreditCard },
 ];
 
 interface VaultFiltersProps {
