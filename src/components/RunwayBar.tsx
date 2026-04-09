@@ -9,21 +9,21 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 
-type RunwayFilter = "all" | "digital-bank" | "local-broker" | "global-broker" | "credit-builder";
+type RunwayFilter = "all" | "digital-bank" | "local-broker" | "global-broker" | "credit-card";
 
 const runwayFilters: { key: RunwayFilter; label: string }[] = [
   { key: "all", label: "All" },
   { key: "digital-bank", label: "Banks" },
   { key: "local-broker", label: "Local" },
   { key: "global-broker", label: "Global" },
-  { key: "credit-builder", label: "Credit" },
+  { key: "credit-card", label: "Credit" },
 ];
 
 const categoryMap: Record<string, RunwayFilter> = {
   "Digital Bank": "digital-bank",
   "Local Broker": "local-broker",
   "Global Broker": "global-broker",
-  "Credit Builder": "credit-builder",
+  "Credit Card": "credit-card",
 };
 
 const RunwayBar = () => {
@@ -49,7 +49,6 @@ const RunwayBar = () => {
 
   return (
     <div className="glass-strong rounded-2xl p-6 max-w-3xl mx-auto">
-      {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <span className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
           Your Runway
@@ -65,7 +64,6 @@ const RunwayBar = () => {
         </div>
       </div>
 
-      {/* Slots */}
       <div className="flex items-center justify-center mb-5">
         {slots.map((slot, i) => {
           const isActive = slot.status === "active";
@@ -90,7 +88,6 @@ const RunwayBar = () => {
                         <p className="text-xs font-semibold text-foreground">Assign to Slot {i + 1}</p>
                         <p className="text-[10px] text-muted-foreground">Filter & pick a product</p>
                       </div>
-                      {/* Mini filter bar */}
                       <div className="flex gap-1 px-3 py-2 border-b border-white/10 flex-wrap">
                         {runwayFilters.map((f) => (
                           <button

@@ -17,7 +17,8 @@ export interface ProductData {
   category: string;
   score: number;
   scoreTooltip?: string;
-  dataPoints: [{ label: string; value: string }, { label: string; value: string }, { label: string; value: string }];
+  dataPoints: { label: string; value: string }[];
+  tags?: string[];
   proTip: string;
   applyUrl: string;
   logoEmoji: string;
@@ -26,7 +27,15 @@ export interface ProductData {
   verdict: string;
 }
 
-const ProductCard = ({ product }: { product: ProductData }) => {
+const ProductCard = ({
+  product,
+  isTopPick,
+  topPickCategory,
+}: {
+  product: ProductData;
+  isTopPick?: boolean;
+  topPickCategory?: string;
+}) => {
   const { addToRunway, removeFromSlot, isInRunway, slots } = useRunway();
   const inRunway = isInRunway(product.id);
   const [justAdded, setJustAdded] = useState(false);
@@ -51,58 +60,97 @@ const ProductCard = ({ product }: { product: ProductData }) => {
 
   return (
     <div className="glass rounded-2xl overflow-hidden transition-all hover:shadow-xl w-full">
-      {/* Main content row */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between p-5 gap-5">
-        {/* Left: Brand + Score */}
-        <div className="flex items-center gap-3 shrink-0">
+      {/* Top pick badge */}
+      {isTopPick && topPickCategory && (
+        <div className="px-6 pt-4">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 border border-primary/20 px-3 py-1 text-xs font-semibold text-primary">
+            <span className="h-2 w-2 rounded-full bg-primary" />
+            Top pick · {topPickCategory}s
+          </span>
+        </div>
+      )}
+
+      {/* Header: Logo + Name + Score */}
+      <div className="flex items-center justify-between px-6 pt-4 pb-3">
+        <div className="flex items-center gap-3">
           <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-white/30 backdrop-blur-sm text-2xl border border-white/20">
             {product.logoEmoji}
           </div>
-          <div className="mr-2">
-            <h3 className="font-semibold text-foreground text-sm leading-tight">{product.name}</h3>
-            <p className="text-[11px] text-muted-foreground">{product.category}</p>
+          <div>
+            <h3 className="font-semibold text-foreground text-base leading-tight">{product.name}</h3>
+            <p className="text-xs text-muted-foreground">{product.category}</p>
           </div>
-          <ScoreGauge score={product.score} tooltip={product.scoreTooltip} />
         </div>
+        <ScoreGauge score={product.score} size={56} tooltip={product.scoreTooltip} />
+      </div>
 
-        {/* Middle: Data */}
-        <div className="grid grid-cols-3 gap-4 flex-1 min-w-0">
-          {product.dataPoints.map((dp) => (
-            <div key={dp.label} className="min-w-0">
-              <p className="text-[10px] text-muted-foreground truncate">{dp.label}</p>
-              <p className="text-xs font-bold text-foreground truncate">{dp.value}</p>
-            </div>
+      {/* Divider */}
+      <div className="mx-6 border-t border-white/15" />
+
+      {/* Data points grid — 4 columns */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-x-6 gap-y-3 px-6 py-4">
+        {product.dataPoints.map((dp) => (
+          <div key={dp.label}>
+            <p className="text-[11px] text-muted-foreground">{dp.label}</p>
+            <p className="text-sm font-bold text-foreground">{dp.value}</p>
+          </div>
+        ))}
+      </div>
+
+      {/* Feature pills */}
+      {product.tags && product.tags.length > 0 && (
+        <div className="flex flex-wrap gap-2 px-6 pb-4">
+          {product.tags.map((tag, i) => (
+            <span
+              key={i}
+              className={`rounded-full px-3 py-1 text-xs font-medium border ${
+                i < 2
+                  ? "border-primary/30 text-primary bg-primary/5"
+                  : "border-white/20 text-muted-foreground bg-white/5"
+              }`}
+            >
+              {tag}
+            </span>
           ))}
         </div>
+      )}
 
-        {/* Right: Actions */}
-        <div className="flex items-center gap-2 shrink-0">
-          <Button asChild className="rounded-full" size="sm">
-            <a href={product.applyUrl} target="_blank" rel="noopener noreferrer">
-              Apply Now
-              <ExternalLink className="ml-1 h-3 w-3" />
-            </a>
-          </Button>
-          <Button
-            variant={inRunway ? "default" : "outline"}
-            size="icon"
-            className={`shrink-0 rounded-full h-9 w-9 transition-all ${justAdded ? "animate-bounce-in" : ""} ${
-              !inRunway ? "bg-white/20 backdrop-blur-sm border-white/30 hover:bg-white/40" : ""
-            }`}
-            onClick={handleToggleRunway}
-            aria-label={inRunway ? "Remove from Runway" : "Add to Runway"}
-          >
-            {inRunway ? <Check className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
-          </Button>
-        </div>
+      {/* Action buttons */}
+      <div className="flex items-center gap-3 px-6 pb-4">
+        <Button asChild variant="outline" className="rounded-full" size="sm">
+          <a href={product.applyUrl} target="_blank" rel="noopener noreferrer">
+            Apply now
+            <ExternalLink className="ml-1.5 h-3 w-3" />
+          </a>
+        </Button>
+        <Button
+          variant={inRunway ? "default" : "outline"}
+          size="sm"
+          className={`rounded-full transition-all ${justAdded ? "animate-bounce-in" : ""} ${
+            !inRunway ? "bg-white/10 backdrop-blur-sm border-white/20 hover:bg-white/20" : ""
+          }`}
+          onClick={handleToggleRunway}
+        >
+          {inRunway ? (
+            <>
+              <Check className="mr-1.5 h-3.5 w-3.5" />
+              In Runway
+            </>
+          ) : (
+            <>
+              <Plus className="mr-1.5 h-3.5 w-3.5" />
+              Add to Runway
+            </>
+          )}
+        </Button>
       </div>
 
       {/* Accordions */}
-      <div className="border-t border-white/20 px-5 pb-2">
+      <div className="border-t border-white/15 px-6 pb-2">
         <Accordion type="multiple">
           <AccordionItem value="breakdown" className="border-b border-white/10">
-            <AccordionTrigger className="text-xs font-semibold text-primary hover:no-underline py-3">
-              Product Breakdown
+            <AccordionTrigger className="text-sm font-medium text-muted-foreground hover:text-foreground hover:no-underline py-3">
+              Product breakdown
             </AccordionTrigger>
             <AccordionContent>
               <p className="text-xs text-muted-foreground leading-relaxed pb-2">{product.breakdown}</p>
@@ -110,8 +158,8 @@ const ProductCard = ({ product }: { product: ProductData }) => {
           </AccordionItem>
 
           <AccordionItem value="details" className="border-b border-white/10">
-            <AccordionTrigger className="text-xs font-semibold text-primary hover:no-underline py-3">
-              Key Details
+            <AccordionTrigger className="text-sm font-medium text-muted-foreground hover:text-foreground hover:no-underline py-3">
+              Key details
             </AccordionTrigger>
             <AccordionContent>
               <ul className="space-y-1.5 pb-2">
@@ -126,8 +174,8 @@ const ProductCard = ({ product }: { product: ProductData }) => {
           </AccordionItem>
 
           <AccordionItem value="verdict" className="border-0">
-            <AccordionTrigger className="text-xs font-semibold text-primary hover:no-underline py-3">
-              The Headstart Verdict
+            <AccordionTrigger className="text-sm font-medium text-muted-foreground hover:text-foreground hover:no-underline py-3">
+              The Headstart verdict
             </AccordionTrigger>
             <AccordionContent>
               <p className="text-xs text-muted-foreground leading-relaxed pb-2">{product.verdict}</p>
