@@ -70,79 +70,48 @@ const ProductCard = ({
         </div>
       )}
 
-      {/* Header: Logo + Name + Score */}
+      {/* Header: Logo + Name + Score + Actions */}
       <div className="flex items-center justify-between px-6 pt-4 pb-3">
         <div className="flex items-center gap-3">
           <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-white/30 backdrop-blur-sm text-2xl border border-white/20">
             {product.logoEmoji}
           </div>
-          <div>
-            <h3 className="font-semibold text-foreground text-base leading-tight">{product.name}</h3>
-            <p className="text-xs text-muted-foreground">{product.category}</p>
+          <div className="flex items-center gap-3">
+            <div>
+              <h3 className="font-semibold text-foreground text-base leading-tight">{product.name}</h3>
+              <p className="text-xs text-muted-foreground">{product.category}</p>
+            </div>
+            <ScoreGauge score={product.score} size={44} tooltip={product.scoreTooltip} />
           </div>
         </div>
-        <ScoreGauge score={product.score} size={56} tooltip={product.scoreTooltip} />
-      </div>
-
-      {/* Divider */}
-      <div className="mx-6 border-t border-white/15" />
-
-      {/* Data points grid — 4 columns */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-x-6 gap-y-3 px-6 py-4">
-        {product.dataPoints.map((dp) => (
-          <div key={dp.label}>
-            <p className="text-[11px] text-muted-foreground">{dp.label}</p>
-            <p className="text-sm font-bold text-foreground">{dp.value}</p>
-          </div>
-        ))}
-      </div>
-
-      {/* Feature pills */}
-      {product.tags && product.tags.length > 0 && (
-        <div className="flex flex-wrap gap-2 px-6 pb-4">
-          {product.tags.map((tag, i) => (
-            <span
-              key={i}
-              className={`rounded-full px-3 py-1 text-xs font-medium border ${
-                i < 2
-                  ? "border-primary/30 text-primary bg-primary/5"
-                  : "border-white/20 text-muted-foreground bg-white/5"
-              }`}
-            >
-              {tag}
-            </span>
-          ))}
+        <div className="flex flex-col gap-1.5">
+          <Button asChild size="sm" className="rounded-full text-xs h-8">
+            <a href={product.applyUrl} target="_blank" rel="noopener noreferrer">
+              Apply now
+              <ExternalLink className="ml-1.5 h-3 w-3" />
+            </a>
+          </Button>
+          <Button
+            variant={inRunway ? "default" : "outline"}
+            size="sm"
+            className={`rounded-full text-xs h-8 transition-all ${justAdded ? "animate-bounce-in" : ""} ${
+              !inRunway ? "bg-white/10 backdrop-blur-sm border-white/20 hover:bg-white/20" : ""
+            }`}
+            onClick={handleToggleRunway}
+          >
+            {inRunway ? (
+              <>
+                <Check className="mr-1 h-3 w-3" />
+                In Runway
+              </>
+            ) : (
+              <>
+                <Plus className="mr-1 h-3 w-3" />
+                Add to Runway
+              </>
+            )}
+          </Button>
         </div>
-      )}
-
-      {/* Action buttons */}
-      <div className="flex items-center gap-3 px-6 pb-4">
-        <Button asChild variant="outline" className="rounded-full" size="sm">
-          <a href={product.applyUrl} target="_blank" rel="noopener noreferrer">
-            Apply now
-            <ExternalLink className="ml-1.5 h-3 w-3" />
-          </a>
-        </Button>
-        <Button
-          variant={inRunway ? "default" : "outline"}
-          size="sm"
-          className={`rounded-full transition-all ${justAdded ? "animate-bounce-in" : ""} ${
-            !inRunway ? "bg-white/10 backdrop-blur-sm border-white/20 hover:bg-white/20" : ""
-          }`}
-          onClick={handleToggleRunway}
-        >
-          {inRunway ? (
-            <>
-              <Check className="mr-1.5 h-3.5 w-3.5" />
-              In Runway
-            </>
-          ) : (
-            <>
-              <Plus className="mr-1.5 h-3.5 w-3.5" />
-              Add to Runway
-            </>
-          )}
-        </Button>
       </div>
 
       {/* Accordions */}
