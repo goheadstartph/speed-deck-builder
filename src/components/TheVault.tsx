@@ -76,7 +76,7 @@ const TheVault = () => {
         </div>
 
         {/* Cards */}
-        <div className="flex flex-col gap-4 w-full max-w-5xl mx-auto">
+        <div className="flex flex-col gap-5 w-full max-w-6xl mx-auto">
           {filtered.map((product, i) => (
             <ProductCard
               key={product.id}
