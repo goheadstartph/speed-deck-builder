@@ -58,6 +58,9 @@ const ProductCard = ({
     }
   };
 
+  // Only show first 3 tags
+  const visibleTags = product.tags?.slice(0, 3);
+
   return (
     <div className="glass rounded-2xl overflow-hidden transition-all hover:shadow-xl w-full">
       {/* Top pick badge */}
@@ -85,12 +88,17 @@ const ProductCard = ({
       {/* Divider */}
       <div className="mx-6 border-t border-white/15" />
 
-      {/* Data points grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-x-6 gap-y-3 px-6 py-4">
-        {product.dataPoints.map((dp) => (
-          <div key={dp.label}>
-            <p className="text-[11px] text-muted-foreground">{dp.label}</p>
-            <p className="text-sm font-bold text-foreground">{dp.value}</p>
+      {/* Data points with vertical dividers */}
+      <div className="flex items-start px-6 py-4">
+        {product.dataPoints.map((dp, i) => (
+          <div key={dp.label} className="flex items-start flex-1 min-w-0">
+            <div className="min-w-0">
+              <p className="text-[11px] text-muted-foreground">{dp.label}</p>
+              <p className="text-sm font-bold text-foreground">{dp.value}</p>
+            </div>
+            {i < product.dataPoints.length - 1 && (
+              <div className="mx-4 sm:mx-6 self-stretch w-px bg-border/40 min-h-[32px]" />
+            )}
           </div>
         ))}
       </div>
@@ -99,9 +107,9 @@ const ProductCard = ({
       <div className="mx-6 border-t border-white/15" />
 
       {/* Feature pills */}
-      {product.tags && product.tags.length > 0 && (
+      {visibleTags && visibleTags.length > 0 && (
         <div className="flex flex-wrap gap-2 px-6 py-4">
-          {product.tags.map((tag, i) => (
+          {visibleTags.map((tag, i) => (
             <span
               key={i}
               className={`rounded-full px-3 py-1 text-xs font-medium border ${
@@ -161,26 +169,36 @@ const ProductCard = ({
       {/* Divider */}
       <div className="mx-6 border-t border-white/15" />
 
-      {/* Bottom action bar */}
+      {/* Bottom action bar: + Save for Later | Apply now */}
       <div className="flex items-center gap-3 px-6 py-4">
-        <Button asChild size="sm" className="rounded-full text-xs h-8 flex-1">
+        {/* Plus / Save for Later button */}
+        <button
+          onClick={handleToggleRunway}
+          className={`group flex items-center gap-2 shrink-0 transition-all ${justAdded ? "animate-bounce-in" : ""}`}
+        >
+          <div
+            className={`flex h-8 w-8 items-center justify-center rounded-lg border transition-colors ${
+              inRunway
+                ? "bg-primary border-primary text-primary-foreground"
+                : "border-border/40 bg-white/5 text-foreground hover:bg-white/10"
+            }`}
+          >
+            {inRunway ? <Check className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
+          </div>
+          <span className="text-xs text-muted-foreground max-w-0 overflow-hidden group-hover:max-w-[120px] transition-all duration-300 whitespace-nowrap">
+            {inRunway ? "Remove" : "Save for Later"}
+          </span>
+        </button>
+
+        {/* Spacer */}
+        <div className="flex-1" />
+
+        {/* Apply now button — shorter, right-aligned, less rounded */}
+        <Button asChild size="sm" className="rounded-lg text-xs h-9 px-6">
           <a href={product.applyUrl} target="_blank" rel="noopener noreferrer">
             Apply now
             <ExternalLink className="ml-1.5 h-3 w-3" />
           </a>
-        </Button>
-        <Button
-          variant={inRunway ? "default" : "outline"}
-          size="icon"
-          className={`rounded-full h-8 w-8 shrink-0 transition-all group relative ${justAdded ? "animate-bounce-in" : ""} ${
-            !inRunway ? "bg-white/10 backdrop-blur-sm border-white/20 hover:bg-white/20" : ""
-          }`}
-          onClick={handleToggleRunway}
-        >
-          {inRunway ? <Check className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
-          <span className="absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-md bg-foreground text-background px-2 py-1 text-[10px] font-medium opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
-            {inRunway ? "Remove from Runway" : "Add to Runway"}
-          </span>
         </Button>
       </div>
     </div>
