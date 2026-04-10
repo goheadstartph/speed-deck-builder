@@ -58,9 +58,6 @@ const ProductCard = ({
     }
   };
 
-  // Only show first 3 tags
-  const visibleTags = product.tags?.slice(0, 3);
-
   return (
     <div className="glass rounded-2xl overflow-hidden transition-all hover:shadow-xl w-full">
       {/* Top pick badge */}
@@ -73,16 +70,42 @@ const ProductCard = ({
         </div>
       )}
 
-      {/* Header: Logo + Name + Score */}
+      {/* Header: Logo + Name + Score + Actions */}
       <div className="flex items-center gap-3 px-6 pt-4 pb-3">
         <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-white/30 backdrop-blur-sm text-2xl border border-white/20">
           {product.logoEmoji}
         </div>
-        <div>
+        <div className="min-w-0">
           <h3 className="font-semibold text-foreground text-base leading-tight">{product.name}</h3>
           <p className="text-xs text-muted-foreground">{product.category}</p>
         </div>
         <ScoreGauge score={product.score} size={44} tooltip={product.scoreTooltip} />
+
+        {/* Spacer to push actions right */}
+        <div className="flex-1" />
+
+        {/* Actions on the title line */}
+        <div className="flex items-center gap-2 shrink-0">
+          <button
+            onClick={handleToggleRunway}
+            className={`group relative flex h-8 w-8 items-center justify-center rounded-lg border transition-colors ${justAdded ? "animate-bounce-in" : ""} ${
+              inRunway
+                ? "bg-primary border-primary text-primary-foreground"
+                : "border-border/40 bg-white/5 text-foreground hover:bg-white/10"
+            }`}
+          >
+            {inRunway ? <Check className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
+            <span className="absolute -bottom-7 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-md bg-foreground text-background px-2 py-0.5 text-[10px] font-medium opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
+              {inRunway ? "Remove" : "Save for Later"}
+            </span>
+          </button>
+          <Button asChild size="sm" className="rounded-lg text-xs h-8 px-4">
+            <a href={product.applyUrl} target="_blank" rel="noopener noreferrer">
+              Apply now
+              <ExternalLink className="ml-1.5 h-3 w-3" />
+            </a>
+          </Button>
+        </div>
       </div>
 
       {/* Divider */}
@@ -97,32 +120,11 @@ const ProductCard = ({
               <p className="text-sm font-bold text-foreground">{dp.value}</p>
             </div>
             {i < product.dataPoints.length - 1 && (
-              <div className="mx-4 sm:mx-6 self-stretch w-px bg-border/40 min-h-[32px]" />
+              <div className="mx-4 sm:mx-6 self-stretch w-px bg-border min-h-[32px]" />
             )}
           </div>
         ))}
       </div>
-
-      {/* Divider */}
-      <div className="mx-6 border-t border-white/15" />
-
-      {/* Feature pills */}
-      {visibleTags && visibleTags.length > 0 && (
-        <div className="flex flex-wrap gap-2 px-6 py-4">
-          {visibleTags.map((tag, i) => (
-            <span
-              key={i}
-              className={`rounded-full px-3 py-1 text-xs font-medium border ${
-                i < 2
-                  ? "border-primary/30 text-primary bg-primary/5"
-                  : "border-white/20 text-muted-foreground bg-white/5"
-              }`}
-            >
-              {tag}
-            </span>
-          ))}
-        </div>
-      )}
 
       {/* Divider */}
       <div className="mx-6 border-t border-white/15" />
@@ -164,42 +166,6 @@ const ProductCard = ({
             </AccordionContent>
           </AccordionItem>
         </Accordion>
-      </div>
-
-      {/* Divider */}
-      <div className="mx-6 border-t border-white/15" />
-
-      {/* Bottom action bar: + Save for Later | Apply now */}
-      <div className="flex items-center gap-3 px-6 py-4">
-        {/* Plus / Save for Later button */}
-        <button
-          onClick={handleToggleRunway}
-          className={`group flex items-center gap-2 shrink-0 transition-all ${justAdded ? "animate-bounce-in" : ""}`}
-        >
-          <div
-            className={`flex h-8 w-8 items-center justify-center rounded-lg border transition-colors ${
-              inRunway
-                ? "bg-primary border-primary text-primary-foreground"
-                : "border-border/40 bg-white/5 text-foreground hover:bg-white/10"
-            }`}
-          >
-            {inRunway ? <Check className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
-          </div>
-          <span className="text-xs text-muted-foreground max-w-0 overflow-hidden group-hover:max-w-[120px] transition-all duration-300 whitespace-nowrap">
-            {inRunway ? "Remove" : "Save for Later"}
-          </span>
-        </button>
-
-        {/* Spacer */}
-        <div className="flex-1" />
-
-        {/* Apply now button — shorter, right-aligned, less rounded */}
-        <Button asChild size="sm" className="rounded-lg text-xs h-9 px-6">
-          <a href={product.applyUrl} target="_blank" rel="noopener noreferrer">
-            Apply now
-            <ExternalLink className="ml-1.5 h-3 w-3" />
-          </a>
-        </Button>
       </div>
     </div>
   );
