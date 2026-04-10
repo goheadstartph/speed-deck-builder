@@ -62,7 +62,7 @@ const ProductCard = ({
     <div className="glass rounded-2xl overflow-hidden transition-all hover:shadow-xl w-full">
       {/* Top pick badge */}
       {isTopPick && topPickCategory && (
-        <div className="px-6 pt-4">
+        <div className="px-8 pt-5">
           <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 border border-primary/20 px-3 py-1 text-xs font-semibold text-primary">
             <span className="h-2 w-2 rounded-full bg-primary" />
             Top pick · {topPickCategory}s
@@ -71,24 +71,24 @@ const ProductCard = ({
       )}
 
       {/* Header: Logo + Name + Score + Actions */}
-      <div className="flex items-center gap-3 px-6 pt-4 pb-3">
-        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-white/30 backdrop-blur-sm text-2xl border border-white/20">
+      <div className="flex items-center gap-4 px-8 pt-6 pb-5">
+        <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-white/30 backdrop-blur-sm text-2xl border border-white/20">
           {product.logoEmoji}
         </div>
         <div className="min-w-0">
-          <h3 className="font-semibold text-foreground text-base leading-tight">{product.name}</h3>
-          <p className="text-xs text-muted-foreground">{product.category}</p>
+          <h3 className="font-semibold text-foreground text-lg leading-tight">{product.name}</h3>
+          <p className="text-xs text-muted-foreground mt-0.5">{product.category}</p>
         </div>
-        <ScoreGauge score={product.score} size={44} tooltip={product.scoreTooltip} />
+        <ScoreGauge score={product.score} size={48} tooltip={product.scoreTooltip} />
 
-        {/* Spacer to push actions right */}
+        {/* Spacer */}
         <div className="flex-1" />
 
-        {/* Actions on the title line */}
-        <div className="flex items-center gap-2 shrink-0">
+        {/* Actions */}
+        <div className="flex items-center gap-2.5 shrink-0">
           <button
             onClick={handleToggleRunway}
-            className={`group relative flex h-8 w-8 items-center justify-center rounded-lg border transition-colors ${justAdded ? "animate-bounce-in" : ""} ${
+            className={`group relative flex h-9 w-9 items-center justify-center rounded-lg border transition-colors ${justAdded ? "animate-bounce-in" : ""} ${
               inRunway
                 ? "bg-primary border-primary text-primary-foreground"
                 : "border-border/40 bg-white/5 text-foreground hover:bg-white/10"
@@ -99,7 +99,7 @@ const ProductCard = ({
               {inRunway ? "Remove" : "Save for Later"}
             </span>
           </button>
-          <Button asChild size="sm" className="rounded-lg text-xs h-8 px-4">
+          <Button asChild size="sm" className="rounded-md text-xs h-9 px-5">
             <a href={product.applyUrl} target="_blank" rel="noopener noreferrer">
               Apply now
               <ExternalLink className="ml-1.5 h-3 w-3" />
@@ -109,44 +109,44 @@ const ProductCard = ({
       </div>
 
       {/* Divider */}
-      <div className="mx-6 border-t border-white/15" />
+      <div className="mx-8 border-t border-border" />
 
-      {/* Data points with vertical dividers */}
-      <div className="flex items-start px-6 py-4">
+      {/* Data points with vertical dividers — center aligned */}
+      <div className="flex items-center px-8 py-5">
         {product.dataPoints.map((dp, i) => (
-          <div key={dp.label} className="flex items-start flex-1 min-w-0">
-            <div className="min-w-0">
-              <p className="text-[11px] text-muted-foreground">{dp.label}</p>
+          <div key={dp.label} className="flex items-center flex-1 min-w-0">
+            <div className="min-w-0 text-center w-full">
+              <p className="text-[11px] text-muted-foreground mb-0.5">{dp.label}</p>
               <p className="text-sm font-bold text-foreground">{dp.value}</p>
             </div>
             {i < product.dataPoints.length - 1 && (
-              <div className="mx-4 sm:mx-6 self-stretch w-px bg-border min-h-[32px]" />
+              <div className="shrink-0 w-px h-8 bg-border" />
             )}
           </div>
         ))}
       </div>
 
       {/* Divider */}
-      <div className="mx-6 border-t border-white/15" />
+      <div className="mx-8 border-t border-border" />
 
       {/* Accordions */}
-      <div className="px-6">
+      <div className="px-8">
         <Accordion type="multiple">
-          <AccordionItem value="breakdown" className="border-b border-white/10">
-            <AccordionTrigger className="text-sm font-medium text-muted-foreground hover:text-foreground hover:no-underline py-3">
+          <AccordionItem value="breakdown" className="border-b border-border/50">
+            <AccordionTrigger className="text-sm font-medium text-muted-foreground hover:text-foreground hover:no-underline py-4">
               Product breakdown
             </AccordionTrigger>
             <AccordionContent>
-              <p className="text-xs text-muted-foreground leading-relaxed pb-2">{product.breakdown}</p>
+              <p className="text-xs text-muted-foreground leading-relaxed pb-3">{product.breakdown}</p>
             </AccordionContent>
           </AccordionItem>
 
-          <AccordionItem value="details" className="border-b border-white/10">
-            <AccordionTrigger className="text-sm font-medium text-muted-foreground hover:text-foreground hover:no-underline py-3">
+          <AccordionItem value="details" className="border-b border-border/50">
+            <AccordionTrigger className="text-sm font-medium text-muted-foreground hover:text-foreground hover:no-underline py-4">
               Key details
             </AccordionTrigger>
             <AccordionContent>
-              <ul className="space-y-1.5 pb-2">
+              <ul className="space-y-1.5 pb-3">
                 {product.keyDetails.map((detail, i) => (
                   <li key={i} className="text-xs text-muted-foreground flex items-start gap-2">
                     <span className="text-primary mt-0.5">•</span>
@@ -158,14 +158,38 @@ const ProductCard = ({
           </AccordionItem>
 
           <AccordionItem value="verdict" className="border-0">
-            <AccordionTrigger className="text-sm font-medium text-muted-foreground hover:text-foreground hover:no-underline py-3">
+            <AccordionTrigger className="text-sm font-medium text-muted-foreground hover:text-foreground hover:no-underline py-4">
               The Headstart verdict
             </AccordionTrigger>
             <AccordionContent>
-              <p className="text-xs text-muted-foreground leading-relaxed pb-2">{product.verdict}</p>
+              <p className="text-xs text-muted-foreground leading-relaxed pb-3">{product.verdict}</p>
             </AccordionContent>
           </AccordionItem>
         </Accordion>
+      </div>
+
+      {/* Divider */}
+      <div className="mx-8 border-t border-border" />
+
+      {/* Bottom apply section with subheaders */}
+      <div className="flex flex-col items-center gap-1.5 px-8 py-6">
+        <Button asChild size="lg" className="rounded-md text-sm h-11 px-10 w-full max-w-md">
+          <a href={product.applyUrl} target="_blank" rel="noopener noreferrer">
+            APPLY NOW
+            <ExternalLink className="ml-2 h-4 w-4" />
+          </a>
+        </Button>
+        <p className="text-xs text-muted-foreground">
+          on {product.name}'s website
+        </p>
+        <a
+          href={product.applyUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-xs font-medium text-primary hover:underline"
+        >
+          Rates & Fees
+        </a>
       </div>
     </div>
   );
