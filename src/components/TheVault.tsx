@@ -1,6 +1,7 @@
 import { useState, useMemo } from "react";
 import ProductCard from "@/components/ProductCard";
 import VaultFilters, { type FilterKey } from "@/components/VaultFilters";
+import RunwayBar from "@/components/RunwayBar";
 import { products, personaBoost, type Persona } from "@/data/products";
 import { ChevronDown } from "lucide-react";
 
@@ -65,11 +66,16 @@ const TheVault = () => {
           </div>
         </div>
 
-        <div className="mb-6">
+        <div className="mb-4">
           <VaultFilters activeFilter={filter} onFilterChange={setFilter} />
         </div>
 
-        {/* Cards directly below filters */}
+        {/* Runway bar directly below filters */}
+        <div className="mb-6 max-w-5xl mx-auto">
+          <RunwayBar />
+        </div>
+
+        {/* Cards */}
         <div className="flex flex-col gap-4 w-full max-w-5xl mx-auto">
           {filtered.map((product, i) => (
             <ProductCard
