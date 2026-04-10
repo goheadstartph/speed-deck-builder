@@ -65,10 +65,11 @@ const TheVault = () => {
           </div>
         </div>
 
-        <div className="mb-8">
+        <div className="mb-6">
           <VaultFilters activeFilter={filter} onFilterChange={setFilter} />
         </div>
 
+        {/* Cards directly below filters */}
         <div className="flex flex-col gap-4 w-full max-w-5xl mx-auto">
           {filtered.map((product, i) => (
             <ProductCard
