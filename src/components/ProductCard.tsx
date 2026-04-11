@@ -110,6 +110,7 @@ const ProductCard = ({
               on {product.name}'s website · Terms & Conditions apply
             </p>
           </div>
+        </div>
       </div>
 
       {/* Divider */}
@@ -134,7 +135,7 @@ const ProductCard = ({
       <div className="mx-8 border-t border-border" />
 
       {/* Accordions */}
-      <div className="px-8">
+      <div className="px-8 pb-2">
         <Accordion type="multiple">
           <AccordionItem value="breakdown" className="border-b border-border/50">
             <AccordionTrigger className="text-sm font-medium text-muted-foreground hover:text-foreground hover:no-underline py-4">
@@ -170,30 +171,6 @@ const ProductCard = ({
             </AccordionContent>
           </AccordionItem>
         </Accordion>
-      </div>
-
-      {/* Divider */}
-      <div className="mx-8 border-t border-border" />
-
-      {/* Bottom apply section with subheaders */}
-      <div className="flex flex-col items-center gap-1.5 px-8 py-6">
-        <Button asChild size="lg" className="rounded-md text-sm h-11 px-10 w-full max-w-md">
-          <a href={product.applyUrl} target="_blank" rel="noopener noreferrer">
-            APPLY NOW
-            <ExternalLink className="ml-2 h-4 w-4" />
-          </a>
-        </Button>
-        <p className="text-xs text-muted-foreground">
-          on {product.name}'s website
-        </p>
-        <a
-          href={product.applyUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-xs font-medium text-primary hover:underline"
-        >
-          Rates & Fees
-        </a>
       </div>
     </div>
   );
