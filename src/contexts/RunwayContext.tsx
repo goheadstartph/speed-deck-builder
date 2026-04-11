@@ -11,12 +11,14 @@ export type SlotStatus = "empty" | "committed" | "active";
 interface SlotState {
   product: RunwayProduct | null;
   status: SlotStatus;
+  targetDate?: string;
+  remindersEnabled?: boolean;
 }
 
 interface RunwayContextType {
   slots: SlotState[];
   lifetimeGoals: number;
-  addToRunway: (product: RunwayProduct) => void;
+  addToRunway: (product: RunwayProduct, targetDate?: Date, remindersEnabled?: boolean) => void;
   removeFromSlot: (index: number) => void;
   markActive: (index: number) => void;
   isInRunway: (productId: string) => boolean;
@@ -58,12 +60,17 @@ export const RunwayProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     localStorage.setItem(TALLY_KEY, JSON.stringify(lifetimeGoals));
   }, [lifetimeGoals]);
 
-  const addToRunway = useCallback((product: RunwayProduct) => {
+  const addToRunway = useCallback((product: RunwayProduct, targetDate?: Date, remindersEnabled?: boolean) => {
     setSlots((prev) => {
       const nextEmpty = prev.findIndex((s) => s.status === "empty");
       if (nextEmpty === -1) return prev;
       const updated = [...prev];
-      updated[nextEmpty] = { product, status: "committed" };
+      updated[nextEmpty] = {
+        product,
+        status: "committed",
+        targetDate: targetDate?.toISOString(),
+        remindersEnabled: remindersEnabled ?? false,
+      };
       return updated;
     });
   }, []);
