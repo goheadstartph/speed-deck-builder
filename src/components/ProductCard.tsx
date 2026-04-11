@@ -99,13 +99,17 @@ const ProductCard = ({
               {inRunway ? "Remove" : "Save for Later"}
             </span>
           </button>
-          <Button asChild size="sm" className="rounded-md text-xs h-9 px-5">
-            <a href={product.applyUrl} target="_blank" rel="noopener noreferrer">
-              Apply now
-              <ExternalLink className="ml-1.5 h-3 w-3" />
-            </a>
-          </Button>
-        </div>
+          <div className="flex flex-col items-end">
+            <Button asChild size="sm" className="rounded-md text-xs h-9 px-5">
+              <a href={product.applyUrl} target="_blank" rel="noopener noreferrer">
+                Apply now
+                <ExternalLink className="ml-1.5 h-3 w-3" />
+              </a>
+            </Button>
+            <p className="text-[10px] text-muted-foreground mt-1">
+              on {product.name}'s website · Terms & Conditions apply
+            </p>
+          </div>
       </div>
 
       {/* Divider */}
