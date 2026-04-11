@@ -98,7 +98,7 @@ const ProductCard = ({
           <div className="flex-1" />
 
           {/* Actions — stacked vertically */}
-          <div className="flex flex-col items-end gap-1.5 shrink-0">
+          <div className="flex flex-col items-center gap-1 shrink-0">
             <div className="flex items-center gap-2">
               <button
                 onClick={handleToggleRunway}
@@ -120,10 +120,10 @@ const ProductCard = ({
                 </a>
               </Button>
             </div>
-            <p className="text-[9px] text-muted-foreground leading-tight text-right">
+            <p className="text-[9px] text-muted-foreground leading-tight text-center">
               on {product.name}'s website
             </p>
-            <p className="text-[9px] text-muted-foreground/60 leading-tight text-right -mt-1">
+            <p className="text-[9px] text-muted-foreground/60 leading-tight text-center -mt-0.5">
               Terms & Conditions apply
             </p>
           </div>
